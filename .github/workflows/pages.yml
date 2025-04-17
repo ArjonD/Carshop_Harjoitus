@@ -3,7 +3,7 @@ name: Deploy static content to Pages
 
 on:
   push:
-    branches: ['main']
+    branches: ['master']
 
   workflow_dispatch:
 
@@ -16,8 +16,6 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages  
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,6 +25,7 @@ jobs:
           node-version: lts/*
           cache: 'npm'
 
+      # Remove lockfile to fix issue https://github.com/npm/cli/issues/4828
       - name: Remove package-lock.json
         run: rm package-lock.json
 
@@ -40,16 +39,15 @@ jobs:
         run: npm run lint
 
       - name: Build
-        run: npm run build  # produces dist directory
+        run: npx vite build --base=/carshop/
 
+      # Sivuston luonti valmiilla actioneilla:
       - name: Setup Pages
         uses: actions/configure-pages@v4
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
