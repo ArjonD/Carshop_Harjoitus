@@ -16,6 +16,8 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages # Tämä lisätty
     steps:
       - name: Checkout
         uses: actions/checkout@v4
